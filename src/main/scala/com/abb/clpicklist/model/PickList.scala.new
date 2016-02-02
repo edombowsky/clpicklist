@@ -1,0 +1,107 @@
+package com.abb.scalalikejdbc_example.model
+
+import java.math.{BigDecimal => JBigDecimal}
+import java.io.File
+import java.util.ArrayList
+import java.util.Collection
+import java.util.HashMap
+import java.util.List
+import java.util.Map
+import java.util.SortedSet
+import java.util.TreeSet
+
+import scala.math.BigDecimal
+import scala.beans.{BeanProperty, BooleanBeanProperty}
+//remove if not needed
+import scala.collection.JavaConversions._
+
+import com.abb.scalalikejdbc_example.parser.Row
+import com.abb.scalalikejdbc_example.parser.XlsParser
+import com.abb.scalalikejdbc_example.dao.Odb
+import com.abb.scalalikejdbc_example.model.PickList._
+
+import com.typesafe.scalalogging._
+
+object PickList {
+
+  val COMPOSE_DEFINED = "ComposeDefined"
+}
+
+class PickList extends LazyLogging {
+
+  // @BeanProperty
+  var name: String = _
+  var id: BigDecimal = _
+  var category: String = _
+  var branchId: BigDecimal = _
+
+  private val entryMap = new HashMap[String, Entry]
+
+  val entries = new ArrayList[Entry]
+
+  def isComposeDefined(): Boolean = COMPOSE_DEFINED.equalsIgnoreCase(category)
+
+  def addEntries(rows: List[Row]) {
+    for (row <- rows) {
+        addEntry(row)
+    }
+  }
+
+  private def updateSortOrder() {
+    println("DEBUG:: Inside updateSortOrder")
+    val sortedSet = new TreeSet[String](entryMap.keySet)
+    println(s"DEBUG:: sorted set= $sortedSet")
+    var sortOrder : Int = 1
+    println(s"DEBUG:: sortOrder after initialisation= $sortOrder")
+    for (key <- sortedSet) {
+      println(s"DEBUG:: sortOrder before updating= $sortOrder")
+      println(s"DEBUG:: before= ${entryMap.get(key).sortOrder}")
+      entryMap.get(key).sortOrder = Option(sortOrder.toString)
+      println(s"DEBUG:: after= ${entryMap.get(key).sortOrder}")
+      sortOrder += 1
+      println(s"DEBUG:: sortOrder after updating= $sortOrder")
+    }
+  }
+
+  def initilize(file: File) {
+    XlsParser.parse(file, this)
+    // println(this)
+    updateSortOrder()
+  }
+
+  def addEntry(row: Row) {
+    val entry = Entry(row, isComposeDefined)
+    if (entry.parentCode == null) {
+      entries.add(entry)
+    } else {
+      val parent = entryMap.get(entry.parentCode)
+      parent.addChildEntry(entry)
+    }
+    entryMap.put(entry.code, entry)
+  }
+
+  def getAllEntries(level: Int): Collection[Entry] = {
+    val entries = new ArrayList[Entry]()
+    for (entry <- entryMap.values if entry.level == level) entries.add(entry)
+    entries
+  }
+
+  def getEntryCount(): Int = entries.size
+
+  override def toString(): String = {
+    val builder = new StringBuilder()
+    builder.append(" Name:: ")
+      .append(name).append(", Id:: ")
+      .append(id)
+      .append(", Category:: ")
+      .append(category)
+      .append(", BranchId:: ")
+      .append(branchId)
+      .append(", Entries:: \n")
+    // for (entry <- entries) {
+    //   builder.append(entry)
+    // }
+    builder.toString
+  }
+}
+

@@ -1,0 +1,88 @@
+package com.abb.scalalikejdbc_example.model
+
+import com.abb.scalalikejdbc_example.dao.Odb
+import com.abb.scalalikejdbc_example.parser.Row
+import java.util.ArrayList
+import java.util.List
+import java.util.Map
+import scala.beans.{BeanProperty, BooleanBeanProperty}
+//remove if not needed
+import scala.collection.JavaConversions._
+
+case class Entry(code: String,
+                 parentCode: String,
+                 description: String,
+                 aux1: String,
+                 aux2: String,
+                 filterKey: String,
+                 childEntries: ArrayList[Entry],
+                 entryKey: Long,
+                 var parentKey: Long,
+                 var sortOrder: Option[String] = None,
+                 value: String,
+                 var level: Int = 1,
+                 composeDefined: Boolean = false) {
+
+  def addChildEntry(entry: Entry) {
+    println("DEBUG:: Inside addChildEntry...")
+    childEntries.add(entry)
+    entry.parentKey = entryKey
+    entry.level = level + 1
+    if (entry.level > 5) {
+      throw new IllegalArgumentException("Level cannot be more than 5")
+    }
+  }
+
+  override def toString(): String = {
+    val str = "Code: " + code + " parentCode : " + parentCode + " Aux1 : " +
+      aux1 +
+      " Aux2 : " +
+      aux2 +
+      " Description : " +
+      description +
+      " filterKey : " +
+      filterKey +
+      " EnterKey  : " +
+      entryKey +
+      " ParentKey : " +
+      parentKey +
+      " sortOrder : " +
+      sortOrder +
+      " value : " +
+      value +
+      "\n"
+    val builder = new StringBuilder(str)
+    if (!childEntries.isEmpty) {
+      for (e <- childEntries) {
+        builder.append("Child : ").append(e)
+      }
+    }
+    builder.toString
+  }
+}
+
+
+object Entry {
+
+  def apply(row: Row, isComposeDefined: Boolean) = {
+    println("DEBUG:: Entry auxiliary constructor...")
+    val params = row.getParams
+    val parentCode = params.get("Parent")
+    val code = params.get("Code")
+    val description = params.get("Description")
+    val aux1 = params.get("Aux1")
+    val aux2 = params.get("Aux2")
+    val filterKey = params.get("Filter_Key")
+    val childEntries = new ArrayList[Entry]
+    val entryKey = if (isComposeDefined) Odb.nextStaticSequence() else Odb.nextStaticSequence() + 260000
+    val parentKey = 0L
+    val sortOrder = None
+    val level = 1
+    val composeDefined = isComposeDefined
+    val value = if (isComposeDefined) code else ""
+    println(s"DEBUG:: sortOrder= $sortOrder")
+    new Entry(code, parentCode, description, aux1, aux2, filterKey, childEntries,
+              entryKey, parentKey, sortOrder, value, level, isComposeDefined)
+  }
+
+}
