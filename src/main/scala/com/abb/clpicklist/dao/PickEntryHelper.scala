@@ -74,9 +74,9 @@ object PickEntryHelper extends LazyLogging {
       // connection = ODBUtils.getODBConnection
       // connection.setAutoCommit(false)
       // for (statement <- managed(connection.prepareStatement(query))) {
-      println(query)
+      // println(query)
         for (pickList <- pickLists) {
-          println(pickList)
+          // println(pickList)
           // createEntries(statement, pickList, level)
         }
         // val results = statement.executeBatch()

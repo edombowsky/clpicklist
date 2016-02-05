@@ -2,7 +2,6 @@ package com.abb.clpicklist.dao
 
 import java.time.{ZonedDateTime}
 
-import scalikejdbc._
 import scalikejdbc.{DB => SDB, _}
 import scalikejdbc.jsr310._  // Java 8 Date Time API
 

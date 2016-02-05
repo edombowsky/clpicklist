@@ -19,7 +19,7 @@ object Config extends LazyLogging {
   private val properties = new Properties()
 
   // This will be configured once command line args are read
-  var odbConf = DBConfig(s"jdbc:oracle:thin:@server:1521:sid", "username", "password")
+  var odbConf = DBConfig("jdbc:oracle:thin:@server:1521:sid", "username", "password")
   // val connection = DB.connection(odbConf)
 
   val pickDbConfig = DBConfig(s"jdbc:sqlite:$PICKLIST_DB_NAME", "", "")
@@ -52,7 +52,7 @@ object Config extends LazyLogging {
 
     // Parse the connect string for its constituents
     val r = """(.*)/(.*)@(.*)_(.*)""".r
-    val r(username, password, server, sid) = options('db).toString
+    val r(username, password, server, sid) = options('db)
 
     // val odbConf = DBConfig(s"jdbc:oracle:thin:@$server:1521:$sid", username, password)
     // val connection = DB.connection(odbConf)
@@ -65,15 +65,15 @@ object Config extends LazyLogging {
     properties.setProperty("username", username)
     properties.setProperty("password", password)
 
-    println(properties)
+    // println(properties)
     options
   }
 
   def getValue(key: String): String = {
-    properties.getProperty(key.toString())
+    properties.getProperty(key)
   }
 
   def getValue(key: String, `def`: String): String = {
-    properties.getProperty(key.toString(), `def`)
+    properties.getProperty(key, `def`)
   }
 }

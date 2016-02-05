@@ -121,7 +121,7 @@ object Odb extends LazyLogging {
   def activatePickList() {
     try {
       NamedDB(Config.odbConf.name) localTx { implicit session =>
-        val callStatement = s"call Pick_Version_APi.Activate({wirelessly_updateable},{mandatory},{note})"
+        val callStatement = "call Pick_Version_APi.Activate({wirelessly_updateable},{mandatory},{note})"
 
         SQL(callStatement)
           .bindByName('wirelessly_updateable -> false,
@@ -153,7 +153,7 @@ object Odb extends LazyLogging {
         for (d <- data) {
           val entry = new ArrayBuffer[String](FIELD_COUNT)
           d.productIterator.foreach {
-            case e: String => entry += e.toString
+            case e: String => entry += e
             case _ => entry += null
           }
           logger.debug(entry.toString)
@@ -232,7 +232,7 @@ object Odb extends LazyLogging {
             // println(p)
             val pickList = new PickList
             val (listId, name, alternateName, category, branchId, sqlCode) = p
-            println(s"$alternateName ($name) -> CATEGORY:: $category")
+            // println(s"$alternateName ($name) -> CATEGORY:: $category")
             pickList.category = category
             pickList.id = listId
             pickList.name = alternateName

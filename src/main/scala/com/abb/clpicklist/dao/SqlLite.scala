@@ -23,7 +23,7 @@ object SqlLite extends LazyLogging {
     try {
       NamedDB(Config.pickDbConfig.name) localTx { implicit session =>
         SQL(sql).execute.apply()
-        logger.info(s"Table created successfully")
+        logger.info("Table created successfully")
       }
     } catch {
       case e @ (_: SQLException | _: ClassNotFoundException) =>

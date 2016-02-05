@@ -23,7 +23,7 @@ class PickLists(directoryName: String) extends LazyLogging{
 
   def buildDerivedPickList(pickList: PickList) {
     val entries = Odb.getEntries(pickList.sqlCode)
-    println(s"\n\n$entries\n\n")
+    // println(s"\n\n$entries\n\n")
     pickList.addDerivedEntries(entries)
     logger.info(s"Added derived pick-list entry ${pickList.name}")
   }

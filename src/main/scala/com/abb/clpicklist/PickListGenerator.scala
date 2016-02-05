@@ -95,13 +95,13 @@ PickListGenerator
    * @param options map of options retrieved from the command line
    * @return true all necessary arguments have been supplied, otherwise false
    */
-  def areArgsValid(options: Map[Symbol, String]) : Boolean = {
+  def areArgsValid : Boolean = {
 
     val db      = Config.getValue("db", "")
     val pickDir = Config.getValue("pd", "")
     val outDir  = Config.getValue("od", "")
 
-    if (db == "" || pickDir == "" || File(outDir).isRegularFile ) false else true
+    !(db == "" || pickDir == "" || File(outDir).isRegularFile)
   }
 
   def main(argv: Array[String]) {
@@ -115,24 +115,24 @@ PickListGenerator
       sys.exit(0)
     }
 
-    if (!areArgsValid(options)) {
+    if (!areArgsValid) {
       println("Missing required options")
       println(usage)
       sys.exit(0)
     }
 
-    logger.info(s"Starting command line picklist generator with following parameters: \n" +
+    logger.info("Starting command line picklist generator with following parameters: \n" +
                 s"pickDir            : ${Config.getValue("pd")}" +
-                s"\n" +
+                "\n" +
                 s"outputDir          : ${Config.getValue("od")}" +
-                s"\n" +
+                "\n" +
                 s"db_connect_string  : ${Config.getValue("db")}\n")
 
     logger.info("starting Main...")
 
-    val list = new PickLists(Config.getValue("pd", "C:\\Users\\carakoo\\Documents\\PickList"))
-    println("PICKLISTS:: ")
-    println(list)
+    val list = new PickLists(Config.getValue("pd", "/yvr/home/caeadom/PickLists"))
+    // println("PICKLISTS:: ")
+    // println(list)
     list.getAll
     logger.info("Creating pick list entries in ODB")
     PickEntryHelper.createPickList(list)

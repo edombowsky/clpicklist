@@ -49,15 +49,15 @@ class PickList extends LazyLogging {
   }
 
   private def updateSortOrder() {
-    println("DEBUG:: entering updateSortOrder...")
+    // println("DEBUG:: entering updateSortOrder...")
     val sortedSet = new TreeSet[String](entryMap.keySet)
-    println(s"DEBUG:: sortedSet= $sortedSet")
+    // println(s"DEBUG:: sortedSet= $sortedSet")
     var sortOrder: Int = 0
     sortedSet.foreach { key =>
-      println(s"DEBUG: setting sort order to $sortOrder...")
+      // println(s"DEBUG: setting sort order to $sortOrder...")
       // entryMap.get(key).setSortOrder("" + (sortOrder += 1))
       entryMap.get(key).setSortOrder(s"${sortOrder += 1; sortOrder}")
-      println(s"DEBUG:: incrementing sort order to: $sortOrder")
+      // println(s"DEBUG:: incrementing sort order to: $sortOrder")
     }
 
     // for (key <- sortedSet) {
