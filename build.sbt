@@ -11,6 +11,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 resolvers += Resolver.bintrayRepo("pathikrit", "maven")
 
+scapegoatVersion := "1.1.0"
 
 libraryDependencies ++= Seq(
   "org.scalikejdbc"            %% "scalikejdbc"               % "2.3.4",
