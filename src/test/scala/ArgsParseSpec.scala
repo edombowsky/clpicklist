@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2015 ABB.  All rights reserved.
  */
-package com.abb.scalalikejdbc_example
+package com.abb.clpicklist
 
-import com.abb.scalalikejdbc_example.util.ArgsParse._
+import com.abb.clpicklist.util.ArgsParse._
 
 import collection.mutable.Stack
 import org.scalatest._
