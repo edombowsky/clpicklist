@@ -4,7 +4,7 @@ import com.typesafe.scalalogging._
 import better.files.File
 
 import com.abb.clpicklist.dao.Odb
-import com.abb.clpicklist.util.{ArgsParse, Config, FileUtil}
+import com.abb.clpicklist.util.{Config, FileUtil}
 
 
 object PickLists extends LazyLogging {

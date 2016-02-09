@@ -1,17 +1,31 @@
 package com.abb.clpicklist.util
 
+import java.io.{File => JFile}
 import java.util.Properties
 import scala.collection.JavaConversions._
 
 import com.typesafe.scalalogging._
 import scalikejdbc.{DB => SDB, _}
 
-import com.abb.clpicklist.util.ArgsParse._
 import com.abb.clpicklist.db._
 
 
 
 object Config extends LazyLogging {
+
+  case class myConfig(pickDir: String = "", outDir: String = "", db: String = "" )
+
+  val parser = new scopt.OptionParser[myConfig]("clpicklist") {
+    head("clpicklist", "1.x")
+    opt[String]('d', "db") required() action { (x, c) =>
+      c.copy(db = x) } text("db is the ODB connection string")
+    opt[String]('o', "outDir") required() valueName("<file>") action { (x, c) =>
+      c.copy(outDir = x) } text("outDir is the directory to put the picklist.db file")
+    opt[String]('p', "pickDir") required() valueName("<file>") action { (x, c) =>
+      c.copy(pickDir = x) } text("pickDir is the directory containing the picklist sheets (.xls)")
+    help("help") text("prints this usage text")
+  }
+
 
   val XLS_EXTENSIONS = ".xls"
   val PICKLIST_DB_NAME = "picklist.db"
@@ -25,48 +39,36 @@ object Config extends LazyLogging {
   val pickDbConfig = DBConfig(s"jdbc:sqlite:$PICKLIST_DB_NAME", "", "")
   DB.connection(pickDbConfig)
 
-  def parseArguments(args: Array[String]): Map[Symbol,String] = {
+  def parseArguments(args: Array[String]): Boolean = {
 
     properties.clear()
 
-    // Required positional arguments by key in options
-    val required = List()
+    parser.parse(args, myConfig()) match {
+      case Some(config) =>
+        logger.info("All systems go...")
 
-    // Options with value
-    val optional = Map("--db|-d" -> 'db, "--pickDir|-p" -> 'pd, "--outputDir|-o" -> 'od)
+        // Parse the connect string for its constituents
+        val r = """(.*)/(.*)@(.*)_(.*)""".r
+        val r(username, password, server, sid) = config.db
 
-    // Flags
-    val flags = Map("--help|-h" -> 'help)
+        odbConf = DBConfig(s"jdbc:oracle:thin:@$server:1521:$sid", username, password)
+        DB.connection(odbConf)
 
-    // Default options that are passed in
-    val defaultOptions = Map[Symbol, String]('help -> "false", 'od -> ".")
+        properties.setProperty("db", config.db) 
+        properties.setProperty("pd", config.pickDir)
+        properties.setProperty("od", config.outDir)
+        properties.setProperty("server", server)
+        properties.setProperty("sid", sid)
+        properties.setProperty("username", username)
+        properties.setProperty("password", password)
 
-    // Parse options based on the command line args
-    val options = parseOptions(args.toList, required, optional, flags, defaultOptions)
+        true
 
-    // for ((k,v) <- options) { properties.setProperty(k.toString().stripPrefix("'"), v) }
-    options.foreach {
-      keyVal => properties.setProperty(keyVal._1.toString().stripPrefix("'"), keyVal._2)
-    }
-      // println(keyVal._1 + "=" + keyVal._2)}
+      case None =>
+        // arguments are bad, error message will have been displayed
+        false
+      }
 
-    // Parse the connect string for its constituents
-    val r = """(.*)/(.*)@(.*)_(.*)""".r
-    val r(username, password, server, sid) = options('db)
-
-    // val odbConf = DBConfig(s"jdbc:oracle:thin:@$server:1521:$sid", username, password)
-    // val connection = DB.connection(odbConf)
-
-    odbConf = DBConfig(s"jdbc:oracle:thin:@$server:1521:$sid", username, password)
-    DB.connection(odbConf)
-
-    properties.setProperty("server", server)
-    properties.setProperty("sid", sid)
-    properties.setProperty("username", username)
-    properties.setProperty("password", password)
-
-    // println(properties)
-    options
   }
 
   def getValue(key: String): String = {

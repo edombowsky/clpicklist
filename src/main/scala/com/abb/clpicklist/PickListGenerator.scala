@@ -53,7 +53,7 @@ import com.typesafe.scalalogging._
 import better.files.File
 
 import com.abb.clpicklist.dao.{Odb, SqlLite, PickEntryHelper}
-import com.abb.clpicklist.util.{ArgsParse, Config}
+import com.abb.clpicklist.util.Config
 import com.abb.clpicklist.model.PickLists
 
 
@@ -79,54 +79,18 @@ object PickListGenerator extends LazyLogging {
     SqlLite.movePickDB()
   }
 
-  val usage = """PickListGenerator --pickDir|-p <Directory where xls sheet are kept>
-  --outDir|-o <Output Directory for picklist.db>
-  --db|-d <odb connect string>
-  [--help|-h]
-
-Example:
-PickListGenerator
-  --pickDir $TOP/ --outDir /yvr/home/caeadom
-  -db ssvm011_odb/ssvm011_odb@dellr815c_r12102"""
-
-  /**
-   * areArgsValid
-   *
-   * @param options map of options retrieved from the command line
-   * @return true all necessary arguments have been supplied, otherwise false
-   */
-  def areArgsValid : Boolean = {
-
-    val db      = Config.getValue("db", "")
-    val pickDir = Config.getValue("pd", "")
-    val outDir  = Config.getValue("od", "")
-
-    !(db == "" || pickDir == "" || File(outDir).isRegularFile)
-  }
-
   def main(argv: Array[String]) {
 
     // Parse options based on the command line args
-    val options = Config.parseArguments(argv)
+    val okayToProceed = Config.parseArguments(argv)
 
-    // if (options.getOrElse('help, "false").toBoolean) println(usage)
-    if (Config.getValue("help", "false").toBoolean) {
-      println(s"\nUsage:\n$usage")
-      sys.exit(0)
-    }
+    if (! okayToProceed) sys.exit(0)
 
-    if (!areArgsValid) {
-      println("Missing required options")
-      println(usage)
-      sys.exit(0)
-    }
-
-    logger.info("Starting command line picklist generator with following parameters: \n" +
-                s"pickDir            : ${Config.getValue("pd")}" +
-                "\n" +
-                s"outputDir          : ${Config.getValue("od")}" +
-                "\n" +
-                s"db_connect_string  : ${Config.getValue("db")}\n")
+    logger.info(raw"""
+      Starting command line picklist generator with following parameters:
+      pickDir            : ${Config.getValue("pd")}
+      outputDir          : ${Config.getValue("od")}
+      db_connect_string  : ${Config.getValue("db")}""")
 
     logger.info("starting Main...")
 
