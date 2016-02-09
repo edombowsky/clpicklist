@@ -24,6 +24,7 @@ object Config extends LazyLogging {
     opt[String]('p', "pickDir") required() valueName("<file>") action { (x, c) =>
       c.copy(pickDir = x) } text("pickDir is the directory containing the picklist sheets (.xls)")
     help("help") text("prints this usage text")
+    version("version") text("prints version information")
   }
 
 
