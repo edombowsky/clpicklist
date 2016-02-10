@@ -13,16 +13,18 @@ import com.abb.clpicklist.db._
 
 object Config extends LazyLogging {
 
-  case class myConfig(pickDir: String = "", outDir: String = "", db: String = "" )
+  case class myConfig(pickDir: JFile = new JFile("."), outDir: JFile = new JFile("."), db: String = "" )
 
   val parser = new scopt.OptionParser[myConfig]("clpicklist") {
     head("clpicklist", "1.x")
     opt[String]('d', "db") required() action { (x, c) =>
       c.copy(db = x) } text("db is the ODB connection string")
-    opt[String]('o', "outDir") required() valueName("<file>") action { (x, c) =>
-      c.copy(outDir = x) } text("outDir is the directory to put the picklist.db file")
-    opt[String]('p', "pickDir") required() valueName("<file>") action { (x, c) =>
-      c.copy(pickDir = x) } text("pickDir is the directory containing the picklist sheets (.xls)")
+    opt[JFile]('o', "outDir") required() valueName("<file>") action { (x, c) =>
+      c.copy(outDir = x) } text("outDir is the directory to put the generated picklist.db file") validate { x => 
+      if (x.exists) success else failure(s"$x does not exist") }
+    opt[JFile]('p', "pickDir") required() valueName("<file>") action { (x, c) => 
+      c.copy(pickDir = x) } text("pickDir is the directory containing the picklist sheets (.xls)") validate { x => 
+      if (x.exists) success else failure(s"$x does not exist") }
     help("help") text("prints this usage text")
     version("version") text("prints version information")
   }
@@ -56,8 +58,8 @@ object Config extends LazyLogging {
         DB.connection(odbConf)
 
         properties.setProperty("db", config.db) 
-        properties.setProperty("pd", config.pickDir)
-        properties.setProperty("od", config.outDir)
+        properties.setProperty("pd", config.pickDir.getName())
+        properties.setProperty("od", config.outDir.getName())
         properties.setProperty("server", server)
         properties.setProperty("sid", sid)
         properties.setProperty("username", username)
