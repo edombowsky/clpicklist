@@ -58,8 +58,8 @@ object Config extends LazyLogging {
         DB.connection(odbConf)
 
         properties.setProperty("db", config.db) 
-        properties.setProperty("pd", config.pickDir.getName())
-        properties.setProperty("od", config.outDir.getName())
+        properties.setProperty("pd", config.pickDir.getPath())
+        properties.setProperty("od", config.outDir.getPath())
         properties.setProperty("server", server)
         properties.setProperty("sid", sid)
         properties.setProperty("username", username)

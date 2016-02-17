@@ -60,9 +60,8 @@ object SqlLite extends LazyLogging {
       if (! odir.isDirectory) odir.createDirectory()
       source.moveTo(dest, true)
 
-      source.moveTo(dest, true)
       // Files.move(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING)
-      logger.info("picklist.db is created")
+      logger.info(s"picklist.db created and moved to $outDir")
     } catch {
       case e: ControlThrowable => logger.error(s"Failed to copy $DB_NAME to $outDir", e)
     }

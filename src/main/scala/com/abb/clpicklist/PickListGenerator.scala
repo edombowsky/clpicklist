@@ -94,7 +94,7 @@ object PickListGenerator extends LazyLogging {
 
     logger.info("starting Main...")
 
-    val list = new PickLists(Config.getValue("pd", "/yvr/home/caeadom/PickLists"))
+    val list = new PickLists(Config.getValue("od", "/yvr/home/caeadom/PickLists"))
     // println("PICKLISTS:: ")
     // println(list)
     list.getAll
