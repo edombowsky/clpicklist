@@ -100,8 +100,12 @@ object PickListGenerator extends LazyLogging {
     list.getAll
     logger.info("Creating pick list entries in ODB")
     PickEntryHelper.createPickList(list)
+    logger.info("Dummy sign-on")
+    Odb.dummySignOn
     logger.info("Activate pick list")
     // Odb.activatePickList()  needs to be un-commented for final version
+    logger.info("Dummy sign-out")
+    Odb.dummySignOut
     logger.info("Generate SQLLite DB")
     generateSQLLiteDB()
   }

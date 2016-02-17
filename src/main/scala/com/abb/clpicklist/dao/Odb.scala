@@ -204,7 +204,7 @@ object Odb extends LazyLogging {
     rows.toList
   }
 
-  def getPickLists: HashMap[String, PickList]= {
+  def getPickLists: HashMap[String, PickList] = {
 
     val p = PickListTable.syntax("p")
     val b = PickBranchTable.syntax("b")
@@ -251,6 +251,39 @@ object Odb extends LazyLogging {
       case e @ (_: SQLException | _: ClassNotFoundException) =>
         logger.error("PickList Action failed", e)
         throw e
+    }
+  }
+
+  def dummySignOn(): Unit = {
+    try {
+      NamedDB(Config.odbConf.name) localTx { implicit session =>
+        val callStatement = "call single_sign_on_api.set_current_logon_id({userId})"
+        // call Pick_Version_APi.Activate({wirelessly_updateable},{mandatory},{note})"
+
+        SQL(callStatement)
+          .bindByName('userId -> "A977SA001")
+          .execute.apply()
+        logger.info("SignOnPicklist")
+      }
+    } catch {
+      case e @ (_: SQLException | _: ClassNotFoundException) =>
+        logger.error("Dummy single sign-on failed", e)
+    }
+  }
+
+  def dummySignOut(): Unit = {
+    try {
+      NamedDB(Config.odbConf.name) localTx { implicit session =>
+        val callStatement = "call single_sign_on_api.sign_out({userId},{clientType})"
+
+        SQL(callStatement)
+          .bindByName('userId -> "A977SA001", 'clientType -> "PL")
+          .execute.apply()
+        logger.info("signOutPickList")
+      }
+    } catch {
+      case e @ (_: SQLException | _: ClassNotFoundException) =>
+        logger.error("Dummy single sign-on failed", e)
     }
   }
 }
