@@ -11,6 +11,8 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 resolvers += Resolver.bintrayRepo("pathikrit", "maven")
 
+resolvers += Resolver.sonatypeRepo("public")
+
 scapegoatVersion := "1.1.0"
 
 libraryDependencies ++= Seq(
