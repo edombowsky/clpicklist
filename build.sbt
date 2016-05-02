@@ -21,7 +21,7 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc"            %% "scalikejdbc-config"        % "2.3.4",
   "org.scalikejdbc"            %% "scalikejdbc-jsr310"        % "2.3.4",
   "org.scalatest"              %% "scalatest"                 % "2.2.5"    % "test",
-  "com.github.pathikrit"       %% "better-files"              % "2.14.0",
+  "com.github.pathikrit"       %% "better-files"              % "2.15.0",
   "com.typesafe.scala-logging" %% "scala-logging"             % "3.1.0",
   "com.github.scopt"           %% "scopt"                     % "3.3.0",
   "org.apache.poi"             %  "poi"                       % "3.13",
