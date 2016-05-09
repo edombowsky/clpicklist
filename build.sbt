@@ -16,10 +16,10 @@ resolvers += Resolver.sonatypeRepo("public")
 scapegoatVersion := "1.1.0"
 
 libraryDependencies ++= Seq(
-  "org.scalikejdbc"            %% "scalikejdbc"               % "2.3.4",
-  "org.scalikejdbc"            %% "scalikejdbc-interpolation" % "2.3.4",
-  "org.scalikejdbc"            %% "scalikejdbc-config"        % "2.3.4",
-  "org.scalikejdbc"            %% "scalikejdbc-jsr310"        % "2.3.4",
+  "org.scalikejdbc"            %% "scalikejdbc"               % "2.4.0",
+  "org.scalikejdbc"            %% "scalikejdbc-interpolation" % "2.4.0",
+  "org.scalikejdbc"            %% "scalikejdbc-config"        % "2.4.0",
+  "org.scalikejdbc"            %% "scalikejdbc-jsr310"        % "2.4.0,
   "org.scalatest"              %% "scalatest"                 % "2.2.5"    % "test",
   "com.github.pathikrit"       %% "better-files"              % "2.15.0",
   "com.typesafe.scala-logging" %% "scala-logging"             % "3.1.0",
